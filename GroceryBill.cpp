@@ -1,16 +1,41 @@
+//***********************
+//Nathan Marcos (Section 8)
+//Cubi Decastro (Section 4)
+//CPSC 131
+//Project 1
+//***********************
+
 #include "GroceryBill.h"
 #include <iostream>
+#include<fstream>
 
 using namespace std;
 
+//Default constructor for a GroceryBill class obect
 GroceryBill::GroceryBill(const PriceList *priceList, double taxRate) {
-	// To be completed
-
+	pl = priceList;
+	bill = new PriceListItem[1000];
+	billIndex = 0;
+	total = 0;
+	_taxRate = taxRate / 100;
 }
 
-
+//Scans a code to see if the code is valid and how many items there are
 void GroceryBill::scanItem(string scanCode, double quantity) {
-	// To be completed
+	if (pl->isValid(scanCode) == false)
+		throw runtime_error("Item not found");
+	PriceListItem temp = pl->getItem(scanCode);
+	bill[billIndex] = temp;
+	bill[billIndex].setPrice(bill[billIndex].getPrice() * quantity);
+	if (temp.isTaxable() == true)
+	{
+		total += (bill[billIndex].getPrice()*_taxRate) + bill[billIndex].getPrice();
+	}
+	else
+	{
+		total += bill[billIndex].getPrice();
+	}
+	billIndex++;
 }
 
 // Scan multiple codes and quantities from the given text file
@@ -18,26 +43,39 @@ void GroceryBill::scanItem(string scanCode, double quantity) {
 // Example line from text file:
 // 15000000 1.5
 void GroceryBill::scanItemsFromFile(string filename) {
-	// To be completed
-	// HINT: Look at code in PriceList::createPriceListFromDatafile(string filename)
+	ifstream myfile(filename);
+
+	if (myfile.is_open()) {
+		cout << "Successfully opened file " << filename << endl;
+		string code;
+		double quantity;
+		while (myfile >> code >> quantity) {
+			scanItem(code, quantity);
+		}
+		myfile.close();
+	}
+	else
+		throw invalid_argument("Could not open file " + filename);
+	
 }
 
-// return the total cost of all items scanned
+//Return the total cost of all items scanned
 double GroceryBill::getTotal() {
-	// To be completed
+	return total;
 }
 
-// Print the bill to cout. Each line contains the name of an item, total price, and the letter "T" if tax was addded. 
-// The last line shows the total.
-// An example:
-//Plastic_Wrap	1.60547 T
-//Sugar_white	5.475
-//Waffles_frozen	5.16
-//Oil_Canola_100%_pure	2.69
-//Potatoes_red	13.446
-//TOTAL 	28.3765
+//Prints out the bill, if an item is taxed and the total
 void GroceryBill::printBill() {
-	// To be completed
-
+	for (int i = 0; i < billIndex; i++)
+	{
+		char tax = ' ';
+		if (bill[i].isTaxable())
+		{
+			char tax = 'T';
+		}
+		else
+			char tax = ' ';
+		cout << bill[i].getItemName() << "\t" << bill[i].getPrice() << tax << endl;
+	}
+	cout << "Total: " << "\t" << getTotal() << endl;
 }
-
