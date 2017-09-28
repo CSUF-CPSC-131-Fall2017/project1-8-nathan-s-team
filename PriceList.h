@@ -1,22 +1,30 @@
+//***********************
+//Nathan Marcos (Section 8)
+//Cubi Decastro (Section 4)
+//CPSC 131
+//Project 1
+//***********************
+
 #pragma once
 #include <string>
-#include <stdexcept>
-#include "PriceListItem.h"
 
 using namespace std;
 
-class PriceList {
+//Description for each function in the .cpp file
+
+class PriceListItem {
 public:
-	
-	void createPriceListFromDatafile(string filename); // Load information from a text file with the given filename (Completed)
-	void addEntry(string itemName, string code, double price, bool taxable); // add to the price list information about a new item. A max of 1,000,000 entries can be added
-	bool isValid(string code) const; // return true only if the code is valid
-	PriceListItem getItem(string code) const; // return price, item name, taxable? as an PriceListItem object; throw exception if code is not found
+	PriceListItem();
+	PriceListItem(const string &itemName, const string &code, double price, bool taxable);
+	string getItemName();
+	string getCode();
+	double getPrice();
+	bool isTaxable();
+	void PriceListItem::setPrice(double billPrice);
 
 private:
-	// Add private member variables for your class along with any 
-	// other variables required to implement the public member functions
-	// TO BE COMPLETED
-
-
+	string _itemName;
+	string _code;
+	double _price;
+	bool _taxable;
 };
